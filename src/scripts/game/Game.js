@@ -60,14 +60,31 @@ export class Game extends Scene {
     this.container.on("pointerdown", () => {
       this.hero.startJump();
     });
+    this.hero.sprite.once("die", () => {
+      App.scenes.start("Game");
+    });
   }
 
   createBackground() {
     this.bg = new Background();
     this.container.addChild(this.bg.container);
   }
+
   update(dt) {
     this.bg.update(dt);
     this.platforms.update(dt);
+  }
+
+  destroy() {
+    Matter.Events.off(
+      App.physics,
+      "collisionStart",
+      this.onCollisionStart.bind(this)
+    );
+    App.app.ticker.remove(this.update, this);
+    this.bg.destroy();
+    this.hero.destroy();
+    this.platforms.destroy();
+    this.labelScore.destroy();
   }
 }
