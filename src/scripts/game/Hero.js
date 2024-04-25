@@ -4,6 +4,7 @@ import { App } from "../system/App";
 
 export class Hero {
   constructor() {
+    this.score = 0;
     this.createSprite();
     this.createBody();
     App.app.ticker.add(this.update.bind(this));
@@ -12,6 +13,14 @@ export class Hero {
     this.dy = App.config.hero.jumpSpeed;
     this.maxJumps = App.config.hero.maxJumps;
     this.jumpIndex = 0;
+  }
+
+  collectDiamond(diamond) {
+    ++this.score;
+    Matter.World.remove(App.physics.world, diamond.body);
+    diamond.sprite.destroy();
+    diamond.sprite = null;
+    this.sprite.emit("score");
   }
 
   startJump() {

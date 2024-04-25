@@ -1,11 +1,10 @@
+import Matter from "matter-js";
 import { App } from "../system/App";
 
 export class Diamond {
   constructor(x, y) {
-    this.sprite = App.sprite("diamond");
-    this.sprite.x = x;
-    this.sprite.y = y;
     this.createSprite(x, y);
+    App.app.ticker.add(this.update.bind(this));
   }
 
   createSprite(x, y) {
@@ -26,5 +25,14 @@ export class Diamond {
     this.body.gameDiamond = this;
     this.body.isSensor = true;
     Matter.World.add(App.physics.world, this.body);
+  }
+
+  update() {
+    if (this.sprite) {
+      Matter.Body.setPosition(this.body, {
+        x: this.sprite.width / 2 + this.sprite.x + this.sprite.parent.x,
+        y: this.sprite.height / 2 + this.sprite.y + this.sprite.parent.y,
+      });
+    }
   }
 }

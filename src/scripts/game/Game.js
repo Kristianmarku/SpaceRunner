@@ -3,6 +3,7 @@ import { App } from "../system/App";
 import { Scene } from "../system/Scene";
 import { Background } from "./Background";
 import { Hero } from "./Hero";
+import { LabelScore } from "./LabelScore";
 import { Platforms } from "./Platforms";
 
 export class Game extends Scene {
@@ -11,6 +12,15 @@ export class Game extends Scene {
     this.createPlatforms();
     this.createHero();
     this.setEvents();
+    this.createUI();
+  }
+
+  createUI() {
+    this.labelScore = new LabelScore();
+    this.container.addChild(this.labelScore);
+    this.hero.sprite.on("score", () => {
+      this.labelScore.renderScore(this.hero.score);
+    });
   }
 
   // If matters touch fire collisionStart
@@ -27,9 +37,14 @@ export class Game extends Scene {
     const colliders = [event.pairs[0].bodyA, event.pairs[0].bodyB];
     const hero = colliders.find((body) => body.gameHero);
     const platform = colliders.find((body) => body.gamePlatform);
+    const diamond = colliders.find((body) => body.gameDiamond);
 
     if (hero && platform) {
       this.hero.stayOnPlatform(platform.gamePlatform);
+    }
+
+    if (hero && diamond) {
+      this.hero.collectDiamond(diamond.gameDiamond);
     }
   }
 
