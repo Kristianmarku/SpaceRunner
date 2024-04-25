@@ -1,6 +1,7 @@
 import * as Matter from "matter-js";
 import * as PIXI from "pixi.js";
 import { App } from "../system/App";
+import { Diamond } from "./Diamond";
 
 export class Platform {
   constructor(rows, cols, x) {
@@ -17,6 +18,30 @@ export class Platform {
     // specify the speed of the platform
     this.dx = App.config.platforms.moveSpeed;
     this.createBody();
+
+    // Diamonds
+    this.diamonds = [];
+    this.createDiamonds();
+  }
+
+  createDiamond(x, y) {
+    const diamond = new Diamond(x, y);
+    this.container.addChild(diamond.sprite);
+    diamond.createBody();
+    this.diamonds.push(diamond);
+  }
+
+  createDiamonds() {
+    const y =
+      App.config.diamonds.offset.min +
+      Math.random() *
+        (App.config.diamonds.offset.max - App.config.diamonds.offset.min);
+
+    for (let i = 0; i < this.cols; i++) {
+      if (Math.random() < App.config.diamonds.chance) {
+        this.createDiamond(this.tileSize * i, -y);
+      }
+    }
   }
 
   move() {

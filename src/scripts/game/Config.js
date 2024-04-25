@@ -3,6 +3,13 @@ import { Game } from "./Game";
 
 export const Config = {
   bgSpeed: 2,
+  diamonds: {
+    chance: 0.4,
+    offset: {
+      min: 100,
+      max: 200,
+    },
+  },
   hero: {
     jumpSpeed: 15,
     maxJumps: 2,

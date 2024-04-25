@@ -15,10 +15,17 @@ export class Hero {
   }
 
   startJump() {
-    if (this.jumpIndex < this.maxJumps) {
+    if (this.platform || this.jumpIndex === 1) {
       ++this.jumpIndex;
+      this.platform = null;
       Matter.Body.setVelocity(this.body, { x: 0, y: -this.dy });
     }
+  }
+
+  // if player touches the ground, reset jumpIndex.
+  stayOnPlatform(platform) {
+    this.platform = platform;
+    this.jumpIndex = 0;
   }
 
   createBody() {
