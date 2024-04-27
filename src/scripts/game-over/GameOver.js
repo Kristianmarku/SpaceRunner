@@ -17,23 +17,54 @@ export class GameOver extends PIXI.utils.EventEmitter {
     this.container.addChild(sprite);
   }
 
-  // Create play button
+  // Create reset button
   createResetButton() {
-    const playButton = new PIXI.Text("Restart Game", {
+    // Create text for the button
+    const resetButtonText = new PIXI.Text("Restart Game", {
       fontFamily: "Arial",
       fontSize: 36,
-      fill: "white",
+      fill: "white", // Text color
     });
-    playButton.anchor.set(0.5);
-    playButton.x = App.app.screen.width / 2;
-    playButton.y = App.app.screen.height / 2;
-    playButton.interactive = true;
-    playButton.buttonMode = true;
-    playButton.on("pointerdown", () => {
+
+    // Calculate the position of the text within the button
+    resetButtonText.position.set(
+      -resetButtonText.width / 2, // Center horizontally
+      -resetButtonText.height / 2 // Center vertically
+    );
+
+    // Create a container for the button
+    const resetButtonContainer = new PIXI.Container();
+    resetButtonContainer.position.set(
+      App.app.screen.width / 2,
+      App.app.screen.height / 2
+    );
+
+    // Create button background shape (rectangle)
+    const buttonBackground = new PIXI.Graphics();
+    buttonBackground.beginFill(0x007bff); // Bootstrap primary color
+    buttonBackground.drawRect(
+      -resetButtonText.width / 2 - 10, // Add some padding
+      -resetButtonText.height / 2 - 5, // Add some padding
+      resetButtonText.width + 20, // Add padding to both sides
+      resetButtonText.height + 10 // Add padding to both top and bottom
+    );
+    buttonBackground.endFill();
+
+    // Add the button text to the container
+    resetButtonContainer.addChild(buttonBackground, resetButtonText);
+
+    // Make the button interactive
+    resetButtonContainer.interactive = true;
+    resetButtonContainer.buttonMode = true;
+
+    // Add pointer events to the button
+    resetButtonContainer.on("pointerdown", () => {
       // Emit an event to notify the parent container that the reset button is clicked
       this.emit("resetGameButtonClicked");
     });
-    this.container.addChild(playButton);
+
+    // Add the button container to the game over container
+    this.container.addChild(resetButtonContainer);
   }
 
   destroy() {

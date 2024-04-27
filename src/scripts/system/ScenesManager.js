@@ -30,6 +30,13 @@ export class ScenesManager {
 
     this.container.addChild(this.scene.container);
 
+    // Reset game parameters if restarting from GameOverScene
+    if (SceneClass === App.config.scenes["GameOverScene"]) {
+      App.score = 0;
+      App.config.platforms.moveSpeed = -1.5;
+      App.config.bgSpeed = 2;
+    }
+
     // Listen for playButtonClicked event emitted by the Menu class
     if (SceneClass === App.config.scenes["MenuScene"]) {
       this.scene.menu.on("playButtonClicked", () => {
@@ -41,7 +48,6 @@ export class ScenesManager {
     if (SceneClass === App.config.scenes["GameOverScene"]) {
       this.scene.gameOver.on("resetGameButtonClicked", () => {
         this.start("GameScene");
-        App.score = 0;
       });
     }
   }

@@ -24,16 +24,16 @@ export const Config = {
     moveSpeed: -1.5, // -1.5 default
     ranges: {
       rows: {
-        min: 2,
-        max: 6,
+        min: 1, // 2 default
+        max: 10, // 6 default
       },
       cols: {
-        min: 3,
-        max: 9,
+        min: 1, // 3
+        max: 15, // 9
       },
       offset: {
-        min: 60,
-        max: 200,
+        min: 60, // 60
+        max: 220, // 200
       },
     },
   },

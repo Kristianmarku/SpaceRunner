@@ -74,6 +74,15 @@ export class Hero {
     this.sprite.x = this.body.position.x - this.sprite.width / 2;
     this.sprite.y = this.body.position.y - this.sprite.height / 2;
 
+    // Check if hero is out of horizontal bounds
+    if (
+      this.sprite.x < 0 || // Left bound
+      this.sprite.x + this.sprite.width > window.innerWidth // Right bound
+    ) {
+      this.sprite.emit("die"); // Emit die event if hero is out of bounds
+    }
+
+    // Check if hero is out of vertical bounds (fallen)
     if (this.sprite.y > window.innerHeight) {
       this.sprite.emit("die");
     }

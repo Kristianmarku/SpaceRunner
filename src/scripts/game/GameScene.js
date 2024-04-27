@@ -86,6 +86,29 @@ export class GameScene extends Scene {
   update(dt) {
     this.bg.update(dt);
     this.platforms.update(dt);
+    this.levelDifficulty();
+  }
+
+  levelDifficulty() {
+    // Calculate the level based on the current score
+    const level = Math.floor(App.score / 2);
+
+    // Calculate the increase in platform movement speed based on the level
+    const speedIncrease = level * 0.1; // Adjust the factor as needed
+
+    // Calculate the new platform movement speed
+    const newSpeed = App.config.platforms.moveSpeed - speedIncrease;
+
+    // Calculate the new background speed
+    const newBgSpeed = App.config.bgSpeed + level * 0.1; // Adjust the factor as needed
+
+    // Update the platform movement speed
+    this.platforms.platforms.forEach((platform) => {
+      platform.dx = newSpeed;
+    });
+
+    // Update the background speed
+    App.config.bgSpeed = newBgSpeed;
   }
 
   destroy() {
