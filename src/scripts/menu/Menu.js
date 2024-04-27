@@ -6,6 +6,7 @@ export class Menu extends PIXI.utils.EventEmitter {
     super(); // Call the parent constructor
     this.container = new PIXI.Container();
     this.createSprite();
+    this.createBackground();
     this.createButtons();
 
     // Listen for difficulty changes
@@ -20,8 +21,28 @@ export class Menu extends PIXI.utils.EventEmitter {
     this.container.addChild(sprite);
   }
 
+  createBackground() {
+    const texture = PIXI.Texture.from("menu"); // Load your menu background image
+    const sprite = new PIXI.Sprite(texture);
+
+    // Scale the sprite to fit the stage while maintaining aspect ratio
+    sprite.width = App.app.screen.width;
+    sprite.height = App.app.screen.height;
+
+    this.container.addChild(sprite);
+  }
+
   createButtons() {
-    const margin = 450;
+    // Determine base screen resolution
+    const baseScreenWidth = 1920;
+    const baseScreenHeight = 1080;
+
+    // Calculate scaling factors
+    const scaleX = App.app.screen.width / baseScreenWidth;
+    const scaleY = App.app.screen.height / baseScreenHeight;
+
+    // Adjusted margin based on scaling factors
+    const margin = 300 * Math.min(scaleX, scaleY);
 
     // Calculate Y position for the "Play" text
     const playTextY = App.app.screen.height / 2 - 150;
@@ -33,7 +54,7 @@ export class Menu extends PIXI.utils.EventEmitter {
       fill: "white",
     });
     playText.anchor.set(0.5);
-    playText.position.set(470, playTextY);
+    playText.position.set(margin + 20, playTextY);
 
     // Create "Start Game" button
     const playButtonContainer = this.createButtonContainer(
@@ -57,7 +78,7 @@ export class Menu extends PIXI.utils.EventEmitter {
       fill: "white",
     });
     selectDifficultyText.anchor.set(0.5);
-    selectDifficultyText.position.set(530, selectDifficultyY);
+    selectDifficultyText.position.set(margin + 80, selectDifficultyY);
 
     // Calculate Y position for the "Hard" button
     const hardButtonY =
