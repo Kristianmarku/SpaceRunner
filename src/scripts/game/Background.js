@@ -11,7 +11,7 @@ export class Background {
   createSprites() {
     this.sprites = [];
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       this.createSprite(i);
     }
   }

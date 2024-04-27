@@ -5,17 +5,6 @@ import { GameScene } from "./GameScene";
 
 export const Config = {
   bgSpeed: 2,
-  score: {
-    x: 10,
-    y: 10,
-    anchor: 0,
-    style: {
-      fontFamily: "Verdana",
-      fontWeight: "bold",
-      fontSize: 44,
-      fill: ["#FF7F50"],
-    },
-  },
   diamonds: {
     chance: 0.4,
     offset: {
@@ -24,7 +13,7 @@ export const Config = {
     },
   },
   hero: {
-    jumpSpeed: 15,
+    jumpSpeed: 15, // 15 default
     maxJumps: 2,
     position: {
       x: 350,
@@ -32,7 +21,7 @@ export const Config = {
     },
   },
   platforms: {
-    moveSpeed: -1.5,
+    moveSpeed: -1.5, // -1.5 default
     ranges: {
       rows: {
         min: 2,

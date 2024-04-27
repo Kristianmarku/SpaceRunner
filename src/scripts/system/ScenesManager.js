@@ -25,6 +25,9 @@ export class ScenesManager {
       return;
     }
 
+    // Remove any existing scenes before adding the new one
+    this.container.removeChildren();
+
     this.container.addChild(this.scene.container);
 
     // Listen for playButtonClicked event emitted by the Menu class
@@ -38,6 +41,7 @@ export class ScenesManager {
     if (SceneClass === App.config.scenes["GameOverScene"]) {
       this.scene.gameOver.on("resetGameButtonClicked", () => {
         this.start("GameScene");
+        App.score = 0;
       });
     }
   }

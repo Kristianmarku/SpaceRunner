@@ -17,6 +17,7 @@ export class GameScene extends Scene {
 
   createUI() {
     this.labelScore = new LabelScore();
+    this.labelScore.position.set(App.app.renderer.width / 2, 10);
     this.container.addChild(this.labelScore);
     this.hero.sprite.on("score", () => {
       this.labelScore.renderScore(App.score);
