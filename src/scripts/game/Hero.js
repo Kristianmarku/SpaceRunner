@@ -4,7 +4,6 @@ import { App } from "../system/App";
 
 export class Hero {
   constructor() {
-    this.score = 0;
     this.createSprite();
     this.createBody();
     App.app.ticker.add(this.update, this);
@@ -21,7 +20,7 @@ export class Hero {
   }
 
   collectDiamond(diamond) {
-    ++this.score;
+    App.score++;
     Matter.World.remove(App.physics.world, diamond.body);
     if (diamond.sprite) {
       diamond.sprite.destroy();

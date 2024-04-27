@@ -19,7 +19,7 @@ export class GameScene extends Scene {
     this.labelScore = new LabelScore();
     this.container.addChild(this.labelScore);
     this.hero.sprite.on("score", () => {
-      this.labelScore.renderScore(this.hero.score);
+      this.labelScore.renderScore(App.score);
     });
   }
 
@@ -57,9 +57,21 @@ export class GameScene extends Scene {
     this.hero = new Hero();
     this.container.addChild(this.hero.sprite);
     this.container.interactive = true;
-    this.container.on("pointerdown", () => {
+
+    const jumpHandler = () => {
       this.hero.startJump();
+    };
+
+    // Handle pointer down event
+    this.container.on("pointerdown", jumpHandler);
+
+    // Handle space button down event
+    document.addEventListener("keydown", (event) => {
+      if (event.code === "Space") {
+        jumpHandler();
+      }
     });
+
     this.hero.sprite.once("die", () => {
       App.scenes.start("GameOverScene");
     });

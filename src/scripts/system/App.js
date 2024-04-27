@@ -6,6 +6,10 @@ import { Loader } from "./Loader";
 import { ScenesManager } from "./ScenesManager";
 
 class Application {
+  constructor() {
+    this.score = 0;
+  }
+
   run(config) {
     gsap.registerPlugin(PixiPlugin);
     PixiPlugin.registerPIXI(PIXI);
