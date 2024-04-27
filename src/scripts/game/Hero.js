@@ -13,6 +13,11 @@ export class Hero {
     this.dy = App.config.hero.jumpSpeed;
     this.maxJumps = App.config.hero.maxJumps;
     this.jumpIndex = 0;
+
+    // Texture for jumping
+    this.jumpTexture = App.res("jump");
+    // Textures for walking animation
+    this.walkTextures = [App.res("walk1"), App.res("walk2")];
   }
 
   collectDiamond(diamond) {
@@ -30,6 +35,8 @@ export class Hero {
       ++this.jumpIndex;
       this.platform = null;
       Matter.Body.setVelocity(this.body, { x: 0, y: -this.dy });
+      // Change texture to jump texture
+      this.sprite.textures = [this.jumpTexture];
     }
   }
 
@@ -37,6 +44,9 @@ export class Hero {
   stayOnPlatform(platform) {
     this.platform = platform;
     this.jumpIndex = 0;
+    // Change texture to walk animation
+    this.sprite.textures = this.walkTextures;
+    this.sprite.play(); // Resume the walking animation
   }
 
   createBody() {

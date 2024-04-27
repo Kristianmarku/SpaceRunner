@@ -6,7 +6,7 @@ import { Hero } from "./Hero";
 import { LabelScore } from "./LabelScore";
 import { Platforms } from "./Platforms";
 
-export class Game extends Scene {
+export class GameScene extends Scene {
   create() {
     this.createBackground();
     this.createPlatforms();
@@ -61,7 +61,7 @@ export class Game extends Scene {
       this.hero.startJump();
     });
     this.hero.sprite.once("die", () => {
-      App.scenes.start("Game");
+      App.scenes.start("GameOverScene");
     });
   }
 

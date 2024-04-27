@@ -1,6 +1,6 @@
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
-import * as Matter from "matter-js";
+import Matter from "matter-js";
 import * as PIXI from "pixi.js";
 import { Loader } from "./Loader";
 import { ScenesManager } from "./ScenesManager";
@@ -40,7 +40,7 @@ class Application {
   }
 
   start() {
-    this.scenes.start("Game");
+    this.scenes.start("MenuScene");
   }
 }
 

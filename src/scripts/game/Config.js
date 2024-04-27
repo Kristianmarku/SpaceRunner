@@ -1,5 +1,7 @@
+import { GameOverScene } from "../game-over/GameOverScene";
+import { MenuScene } from "../menu/MenuScene";
 import { Tools } from "../system/Tools";
-import { Game } from "./Game";
+import { GameScene } from "./GameScene";
 
 export const Config = {
   bgSpeed: 2,
@@ -51,6 +53,8 @@ export const Config = {
     require["context"]("./../../sprites/", true, /\.(mp3|png|jpe?g)$/)
   ),
   scenes: {
-    Game: Game,
+    MenuScene: MenuScene,
+    GameScene: GameScene,
+    GameOverScene: GameOverScene,
   },
 };
