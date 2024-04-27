@@ -90,8 +90,18 @@ export class GameScene extends Scene {
   }
 
   levelDifficulty() {
+    // Get difficulty from config
+    const diff = App.config.difficulty;
+    console.log(diff);
+
     // Calculate the level based on the current score
-    const level = Math.floor(App.score / 2);
+    let level = Math.floor(App.score / 5);
+
+    if (diff === "hard") {
+      level = Math.floor(App.score / 1);
+    } else if (diff === "medium") {
+      level = Math.floor(App.score / 3);
+    }
 
     // Calculate the increase in platform movement speed based on the level
     const speedIncrease = level * 0.1; // Adjust the factor as needed

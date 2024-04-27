@@ -4,6 +4,7 @@ import { Tools } from "../system/Tools";
 import { GameScene } from "./GameScene";
 
 export const Config = {
+  difficulty: "normal",
   bgSpeed: 2,
   diamonds: {
     chance: 0.4,

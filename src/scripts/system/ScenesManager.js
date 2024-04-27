@@ -42,12 +42,35 @@ export class ScenesManager {
       this.scene.menu.on("playButtonClicked", () => {
         this.start("GameScene");
       });
+
+      // Listen for hardButtonClicked event emitted by the Menu class
+      this.scene.menu.on("hardButtonClicked", () => {
+        // Update game difficulty to hard
+        App.config.difficulty = "hard";
+        // Emit difficulty changed event
+        this.scene.menu.emit("difficultyChanged");
+      });
+
+      // Listen for mediumButtonClicked event emitted by the Menu class
+      this.scene.menu.on("mediumButtonClicked", () => {
+        // Update game difficulty to medium
+        App.config.difficulty = "medium";
+        // Emit difficulty changed event
+        this.scene.menu.emit("difficultyChanged");
+      });
     }
 
     // Listen for resetGameButtonClicked event emitted by the Menu class
     if (SceneClass === App.config.scenes["GameOverScene"]) {
       this.scene.gameOver.on("resetGameButtonClicked", () => {
         this.start("GameScene");
+      });
+
+      // if lobby button is clicked
+      this.scene.gameOver.on("lobbyButtonClicked", () => {
+        this.start("MenuScene");
+        App.config.difficulty = "normal";
+        this.scene.menu.emit("difficultyChanged");
       });
     }
   }
