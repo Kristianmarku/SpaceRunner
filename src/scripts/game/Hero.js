@@ -17,6 +17,11 @@ export class Hero {
     this.jumpTexture = App.res("jump");
     // Textures for walking animation
     this.walkTextures = [App.res("walk1"), App.res("walk2")];
+    // Textures for flying animation
+    this.flyTextures = [App.res("fly1"), App.res("fly2"), App.res("fly3")];
+
+    // Flying state
+    this.isFlying = false;
   }
 
   collectDiamond(diamond) {
@@ -29,13 +34,56 @@ export class Hero {
     this.sprite.emit("score");
   }
 
+  collectWing(wing) {
+    Matter.World.remove(App.physics.world, wing.body);
+    if (wing.sprite) {
+      wing.sprite.destroy();
+      wing.sprite = null;
+    }
+    this.startFlying();
+  }
+
+  startFlying() {
+    this.isFlying = true;
+
+    // Calculate the jump force to make the hero jump a little bit
+    const jumpForce = -35; // Adjust this value to control the jump height
+
+    // Apply the jump force
+    Matter.Body.setVelocity(this.body, { x: 0, y: jumpForce });
+
+    // Set the hovering force
+    this.hoverForce = 0.05;
+
+    // Disable gravity
+    App.physics.gravity.y = 0;
+
+    // Set timeout for flying
+    setTimeout(() => {
+      this.isFlying = false;
+      App.physics.gravity.y = 1;
+    }, 5000);
+
+    // Switch to flying animation
+    this.sprite.textures = this.flyTextures;
+    this.sprite.animationSpeed = 0.1;
+    this.sprite.play();
+  }
+
+  stopFlying() {
+    App.physics.gravity.y = 1;
+    this.isFlying = false;
+  }
+
   startJump() {
-    if (this.platform || this.jumpIndex === 1) {
-      ++this.jumpIndex;
-      this.platform = null;
-      Matter.Body.setVelocity(this.body, { x: 0, y: -this.dy });
-      // Change texture to jump texture
-      this.sprite.textures = [this.jumpTexture];
+    if (!this.isFlying) {
+      if (this.platform || this.jumpIndex === 1) {
+        ++this.jumpIndex;
+        this.platform = null;
+        Matter.Body.setVelocity(this.body, { x: 0, y: -this.dy });
+        // Change texture to jump texture
+        this.sprite.textures = [this.jumpTexture];
+      }
     }
   }
 
@@ -85,6 +133,15 @@ export class Hero {
     // Check if hero is out of vertical bounds (fallen)
     if (this.sprite.y > window.innerHeight) {
       this.sprite.emit("die");
+    }
+
+    // Flying
+    if (this.isFlying && this.body.velocity.y < 0) {
+      // Apply hovering force to counteract gravity
+      Matter.Body.applyForce(this.body, this.body.position, {
+        x: 0,
+        y: this.hoverForce,
+      });
     }
   }
 

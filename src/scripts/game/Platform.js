@@ -2,6 +2,7 @@ import * as Matter from "matter-js";
 import * as PIXI from "pixi.js";
 import { App } from "../system/App";
 import { Diamond } from "./Diamond";
+import { Wing } from "./abilities/Wing";
 
 export class Platform {
   constructor(rows, cols, x) {
@@ -22,6 +23,10 @@ export class Platform {
     // Diamonds
     this.diamonds = [];
     this.createDiamonds();
+
+    // Wings
+    this.wings = [];
+    this.createWings();
   }
 
   createDiamond(x, y) {
@@ -40,6 +45,30 @@ export class Platform {
     for (let i = 0; i < this.cols; i++) {
       if (Math.random() < App.config.diamonds.chance) {
         this.createDiamond(this.tileSize * i, -y);
+      }
+    }
+  }
+
+  createWing(x, y) {
+    const wing = new Wing(x, y);
+    this.container.addChild(wing.sprite);
+    wing.createBody();
+    this.wings.push(wing);
+  }
+
+  createWings() {
+    // Adjust the chance of wing spawns to 1/10th of diamond spawns
+    const wingChance = App.config.wings.chance / 10;
+
+    const y =
+      App.config.wings.offset.min +
+      Math.random() *
+        (App.config.wings.offset.max - App.config.wings.offset.min);
+
+    for (let i = 0; i < this.cols; i++) {
+      // Generate a random number between 0 and 1, if it's less than wingChance, create a wing
+      if (Math.random() < wingChance) {
+        this.createWing(this.tileSize * i, -y);
       }
     }
   }
@@ -97,6 +126,7 @@ export class Platform {
   destroy() {
     Matter.World.remove(App.physics.world, this.body);
     this.diamonds.forEach((diamond) => diamond.destroy());
+    this.wings.forEach((wing) => wing.destroy());
     this.container.destroy();
   }
 }

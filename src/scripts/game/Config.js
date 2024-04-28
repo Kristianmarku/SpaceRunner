@@ -6,6 +6,13 @@ import { GameScene } from "./GameScene";
 export const Config = {
   difficulty: "normal",
   bgSpeed: 2,
+  wings: {
+    chance: 0.1,
+    offset: {
+      min: 100,
+      max: 200,
+    },
+  },
   diamonds: {
     chance: 0.4,
     offset: {

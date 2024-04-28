@@ -39,6 +39,7 @@ export class GameScene extends Scene {
     const hero = colliders.find((body) => body.gameHero);
     const platform = colliders.find((body) => body.gamePlatform);
     const diamond = colliders.find((body) => body.gameDiamond);
+    const wing = colliders.find((body) => body.gameWing);
 
     if (hero && platform) {
       this.hero.stayOnPlatform(platform.gamePlatform);
@@ -46,6 +47,10 @@ export class GameScene extends Scene {
 
     if (hero && diamond) {
       this.hero.collectDiamond(diamond.gameDiamond);
+    }
+
+    if (hero && wing) {
+      this.hero.collectWing(wing.gameWing);
     }
   }
 
@@ -61,6 +66,7 @@ export class GameScene extends Scene {
 
     const jumpHandler = () => {
       this.hero.startJump();
+      this.hero.stopFlying();
     };
 
     // Handle pointer down event
