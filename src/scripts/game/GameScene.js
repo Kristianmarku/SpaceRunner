@@ -98,7 +98,6 @@ export class GameScene extends Scene {
   levelDifficulty() {
     // Get difficulty from config
     const diff = App.config.difficulty;
-    console.log(diff);
 
     // Calculate the level based on the current score
     let level = Math.floor(App.score / 5);
