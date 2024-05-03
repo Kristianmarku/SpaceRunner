@@ -14,6 +14,7 @@ export class MenuScene extends Scene {
       if (App.musicAllowed) {
         sound = new Howl({
           src: [soundFile],
+          loop: true,
         });
         sound.play();
       } else {
