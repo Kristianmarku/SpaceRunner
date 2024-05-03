@@ -13,6 +13,10 @@ export class Menu extends PIXI.utils.EventEmitter {
     this.on("difficultyChanged", () => {
       this.updateButtonColors();
     });
+
+    this.on("backgroundButtonClicked", () => {
+      this.updateButtonColors();
+    });
   }
 
   createSprite() {
@@ -69,7 +73,7 @@ export class Menu extends PIXI.utils.EventEmitter {
 
     // Calculate Y position for the "Select Difficulty" text
     const selectDifficultyY =
-      playButtonContainer.y + playButtonContainer.height + 100;
+      playButtonContainer.y + playButtonContainer.height + 50;
 
     // Create "Select Difficulty" text
     const selectDifficultyText = new PIXI.Text("Select Difficulty", {
@@ -110,13 +114,43 @@ export class Menu extends PIXI.utils.EventEmitter {
       this.emit("mediumButtonClicked");
     });
 
+    // Calculate Y position for the "Allow Music" text
+    const allowMusicTextY =
+      playButtonContainer.y + playButtonContainer.height + 220;
+
+    // Create "Allow Music" text
+    const allowMusicText = new PIXI.Text("Allow Music", {
+      fontFamily: "Arial",
+      fontSize: 24,
+      fill: "white",
+    });
+    allowMusicText.anchor.set(0.5);
+    allowMusicText.position.set(margin + 65, allowMusicTextY);
+
+    // Calculate Y position for the "Background" button
+    const backgroundButton = allowMusicText.y + allowMusicText.height + 10;
+
+    // Create "Background" button
+    this.allowMusicContainer = this.createButtonContainer(
+      "Background",
+      margin,
+      backgroundButton,
+      App.musicAllowed === true ? "0x00FF00" : "0xFF0000"
+    );
+    this.allowMusicContainer.on("pointerdown", () => {
+      App.musicAllowed = !App.musicAllowed;
+      this.emit("backgroundButtonClicked");
+    });
+
     // Add buttons and text to the container
     this.container.addChild(
       playText,
       playButtonContainer,
       selectDifficultyText,
+      allowMusicText,
       this.hardButtonContainer,
-      this.mediumButtonContainer
+      this.mediumButtonContainer,
+      this.allowMusicContainer
     );
   }
 
@@ -186,6 +220,21 @@ export class Menu extends PIXI.utils.EventEmitter {
         this.mediumButtonContainer.buttonText.height + 10
       );
     this.mediumButtonContainer.getChildAt(0).endFill();
+
+    // Update "AllowMusic" button color
+    const allowMusicButtonColor =
+      App.musicAllowed === true ? "0x00FF00" : "0xFF0000";
+    this.allowMusicContainer.getChildAt(0).clear();
+    this.allowMusicContainer.getChildAt(0).beginFill(allowMusicButtonColor);
+    this.allowMusicContainer
+      .getChildAt(0)
+      .drawRect(
+        0,
+        0,
+        this.allowMusicContainer.buttonText.width + 20,
+        this.allowMusicContainer.buttonText.height + 10
+      );
+    this.allowMusicContainer.getChildAt(0).endFill();
   }
 
   destroy() {

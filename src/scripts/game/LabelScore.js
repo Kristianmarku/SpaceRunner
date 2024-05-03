@@ -13,7 +13,7 @@ export class LabelScore extends PIXI.Container {
     const badgeWidth = 155; // Initial width of the badge
     const badgeHeight = 60;
     const scoreBadge = new PIXI.Graphics();
-    scoreBadge.beginFill(0x000000, 0.8);
+    scoreBadge.beginFill(0x000000, 0.2);
     scoreBadge.drawRoundedRect(0, 0, badgeWidth, badgeHeight, 10);
     scoreBadge.endFill();
 

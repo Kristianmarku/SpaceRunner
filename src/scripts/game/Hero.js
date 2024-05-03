@@ -1,5 +1,8 @@
+import { Howl, Howler } from "howler";
 import * as Matter from "matter-js";
 import * as PIXI from "pixi.js";
+import jumpSoundEffect from "../../sounds/jump.mp3";
+import collectDiamondSoundEffect from "../../sounds/point_collect.mp3";
 import { App } from "../system/App";
 
 export class Hero {
@@ -22,6 +25,55 @@ export class Hero {
 
     // Flying state
     this.isFlying = false;
+    this.flySoundEffect = null;
+
+    // Event listeners for keyboard input
+    document.addEventListener("keydown", this.handleKeyDown.bind(this));
+    document.addEventListener("keyup", this.handleKeyUp.bind(this));
+
+    // Flags to track key states
+    this.isMovingLeft = false;
+    this.isMovingRight = false;
+  }
+
+  handleKeyDown(event) {
+    if (event.key === "a" || event.key === "A") {
+      this.moveLeft();
+    } else if (event.key === "d" || event.key === "D") {
+      this.moveRight();
+    }
+  }
+
+  handleKeyUp(event) {
+    if (event.key === "a" || event.key === "A") {
+      this.stopMovingLeft();
+    } else if (event.key === "d" || event.key === "D") {
+      this.stopMovingRight();
+    }
+  }
+
+  moveLeft() {
+    const forceMagnitude = -0.2; // Adjust this value based on the desired movement speed
+    Matter.Body.applyForce(this.body, this.body.position, {
+      x: forceMagnitude,
+      y: 0,
+    });
+  }
+
+  moveRight() {
+    const forceMagnitude = 0.2; // Adjust this value based on the desired movement speed
+    Matter.Body.applyForce(this.body, this.body.position, {
+      x: forceMagnitude,
+      y: 0,
+    });
+  }
+
+  stopMovingLeft() {
+    this.isMovingLeft = false;
+  }
+
+  stopMovingRight() {
+    this.isMovingRight = false;
   }
 
   collectDiamond(diamond) {
@@ -31,6 +83,14 @@ export class Hero {
       diamond.sprite.destroy();
       diamond.sprite = null;
     }
+
+    // Sound Effect
+    let sound = new Howl({
+      src: [collectDiamondSoundEffect],
+    });
+    sound.play();
+
+    // Emit Score
     this.sprite.emit("score");
   }
 
@@ -60,9 +120,16 @@ export class Hero {
 
     // Set timeout for flying
     setTimeout(() => {
-      this.isFlying = false;
-      App.physics.gravity.y = 1;
+      this.stopFlying();
     }, 5000);
+
+    // Sound Effect
+    this.flySoundEffect = new Howl({
+      src: [jumpSoundEffect],
+      rate: 2.3,
+      loop: true,
+    });
+    this.flySoundEffect.play();
 
     // Switch to flying animation
     this.sprite.textures = this.flyTextures;
@@ -73,6 +140,10 @@ export class Hero {
   stopFlying() {
     App.physics.gravity.y = 1;
     this.isFlying = false;
+
+    if (this.flySoundEffect) {
+      this.flySoundEffect.stop();
+    }
   }
 
   startJump() {
@@ -81,6 +152,13 @@ export class Hero {
         ++this.jumpIndex;
         this.platform = null;
         Matter.Body.setVelocity(this.body, { x: 0, y: -this.dy });
+
+        // Sound Effect
+        let sound = new Howl({
+          src: [jumpSoundEffect],
+        });
+        sound.play();
+
         // Change texture to jump texture
         this.sprite.textures = [this.jumpTexture];
       }
@@ -142,6 +220,14 @@ export class Hero {
         x: 0,
         y: this.hoverForce,
       });
+    }
+
+    // Apply movement based on keyboard input
+    if (this.isMovingLeft) {
+      this.moveLeft();
+    }
+    if (this.isMovingRight) {
+      this.moveRight();
     }
   }
 

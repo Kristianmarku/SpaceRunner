@@ -8,6 +8,7 @@ import { ScenesManager } from "./ScenesManager";
 class Application {
   constructor() {
     this.score = 0;
+    this.musicAllowed = false;
   }
 
   run(config) {
