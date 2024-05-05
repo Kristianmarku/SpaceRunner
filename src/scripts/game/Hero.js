@@ -22,6 +22,14 @@ export class Hero {
     this.walkTextures = [App.res("walk1"), App.res("walk2")];
     // Textures for flying animation
     this.flyTextures = [App.res("fly1"), App.res("fly2"), App.res("fly3")];
+    // Texture Effect for collecting
+    this.collectEffect = [
+      App.res("Cosmic_21"),
+      App.res("Cosmic_22"),
+      App.res("Cosmic_23"),
+      App.res("Cosmic_24"),
+      App.res("Cosmic_25"),
+    ];
 
     // Flying state
     this.isFlying = false;
@@ -84,7 +92,7 @@ export class Hero {
       diamond.sprite = null;
     }
 
-    // Sound Effect
+    // Play sound effect
     let sound = new Howl({
       src: [collectDiamondSoundEffect],
     });
@@ -92,6 +100,34 @@ export class Hero {
 
     // Emit Score
     this.sprite.emit("score");
+
+    // Create collect effect animation
+    const collectEffectAnimation = new PIXI.AnimatedSprite(this.collectEffect);
+    collectEffectAnimation.anchor.set(0.5);
+    collectEffectAnimation.position.set(
+      this.sprite.x + this.sprite.width / 2,
+      this.sprite.y + this.sprite.height / 2
+    );
+    collectEffectAnimation.animationSpeed = 0.2;
+    collectEffectAnimation.loop = false;
+    App.app.stage.addChild(collectEffectAnimation);
+    collectEffectAnimation.play();
+
+    // Update collect effect position in game loop until animation is finished
+    const updateCollectEffectPosition = () => {
+      collectEffectAnimation.position.set(
+        this.sprite.x + this.sprite.width / 2,
+        this.sprite.y + this.sprite.height / 2
+      );
+      if (!collectEffectAnimation.playing) {
+        App.app.ticker.remove(updateCollectEffectPosition);
+        collectEffectAnimation.destroy();
+      }
+    };
+    App.app.ticker.add(updateCollectEffectPosition);
+
+    // Ensure hero sprite is rendered above collect effect animation
+    App.app.stage.addChild(this.sprite);
   }
 
   collectWing(wing) {

@@ -1,18 +1,20 @@
-import Matter from "matter-js";
-import { App } from "../system/App";
-import { Scene } from "../system/Scene";
-import { Background } from "./Background";
-import { Hero } from "./Hero";
-import { LabelScore } from "./LabelScore";
-import { Platforms } from "./Platforms";
+const Matter = require("matter-js");
+const { App } = require("../system/App");
+const { Scene } = require("../system/Scene");
+const { Background } = require("./Background");
+const { Hero } = require("./Hero");
+const { LabelScore } = require("./LabelScore");
+const { Platforms } = require("./Platforms");
 
-export class GameScene extends Scene {
+class GameScene extends Scene {
   create() {
     this.createBackground();
     this.createPlatforms();
     this.createHero();
     this.setEvents();
     this.createUI();
+    this.lastTime = performance.now();
+    this.updateLoop();
   }
 
   createUI() {
@@ -24,7 +26,6 @@ export class GameScene extends Scene {
     });
   }
 
-  // If matters touch fire collisionStart
   setEvents() {
     Matter.Events.on(
       App.physics,
@@ -33,24 +34,23 @@ export class GameScene extends Scene {
     );
   }
 
-  // if player is on platform
   onCollisionStart(event) {
-    const colliders = [event.pairs[0].bodyA, event.pairs[0].bodyB];
-    const hero = colliders.find((body) => body.gameHero);
-    const platform = colliders.find((body) => body.gamePlatform);
-    const diamond = colliders.find((body) => body.gameDiamond);
-    const wing = colliders.find((body) => body.gameWing);
-
-    if (hero && platform) {
-      this.hero.stayOnPlatform(platform.gamePlatform);
-    }
-
-    if (hero && diamond) {
-      this.hero.collectDiamond(diamond.gameDiamond);
-    }
-
-    if (hero && wing) {
-      this.hero.collectWing(wing.gameWing);
+    const { pairs } = event;
+    for (const pair of pairs) {
+      const { bodyA, bodyB } = pair;
+      if (bodyA.gameHero && bodyB.gamePlatform) {
+        this.hero.stayOnPlatform(bodyB.gamePlatform);
+      } else if (bodyA.gamePlatform && bodyB.gameHero) {
+        this.hero.stayOnPlatform(bodyA.gamePlatform);
+      } else if (bodyA.gameHero && bodyB.gameDiamond) {
+        this.hero.collectDiamond(bodyB.gameDiamond);
+      } else if (bodyA.gameDiamond && bodyB.gameHero) {
+        this.hero.collectDiamond(bodyA.gameDiamond);
+      } else if (bodyA.gameHero && bodyB.gameWing) {
+        this.hero.collectWing(bodyB.gameWing);
+      } else if (bodyA.gameWing && bodyB.gameHero) {
+        this.hero.collectWing(bodyA.gameWing);
+      }
     }
   }
 
@@ -69,10 +69,10 @@ export class GameScene extends Scene {
       this.hero.stopFlying();
     };
 
-    // Handle pointer down event
+    // Add event listener for pointer down event
     this.container.on("pointerdown", jumpHandler);
 
-    // Handle space button down event
+    // Add event listener for space button down event
     document.addEventListener("keydown", (event) => {
       if (event.code === "Space") {
         jumpHandler();
@@ -96,33 +96,23 @@ export class GameScene extends Scene {
   }
 
   levelDifficulty() {
-    // Get difficulty from config
     const diff = App.config.difficulty;
-
-    // Calculate the level based on the current score
     let level = Math.floor(App.score / 5);
 
     if (diff === "hard") {
-      level = Math.floor(App.score / 1);
+      level = Math.floor(App.score);
     } else if (diff === "medium") {
       level = Math.floor(App.score / 3);
     }
 
-    // Calculate the increase in platform movement speed based on the level
-    const speedIncrease = level * 0.1; // Adjust the factor as needed
-
-    // Calculate the new platform movement speed
+    const speedIncrease = level * 0.1;
     const newSpeed = App.config.platforms.moveSpeed - speedIncrease;
+    const newBgSpeed = App.config.bgSpeed + level * 0.1;
 
-    // Calculate the new background speed
-    const newBgSpeed = App.config.bgSpeed + level * 0.1; // Adjust the factor as needed
-
-    // Update the platform movement speed
     this.platforms.platforms.forEach((platform) => {
       platform.dx = newSpeed;
     });
 
-    // Update the background speed
     App.config.bgSpeed = newBgSpeed;
   }
 
@@ -132,10 +122,19 @@ export class GameScene extends Scene {
       "collisionStart",
       this.onCollisionStart.bind(this)
     );
-    App.app.ticker.remove(this.update, this);
     this.bg.destroy();
     this.hero.destroy();
     this.platforms.destroy();
     this.labelScore.destroy();
   }
+
+  updateLoop() {
+    const currentTime = performance.now();
+    const dt = (currentTime - this.lastTime) / 1000;
+    this.update(dt);
+    this.lastTime = currentTime;
+    requestAnimationFrame(this.updateLoop.bind(this));
+  }
 }
+
+module.exports = { GameScene };
